@@ -1,0 +1,22 @@
+# 虚拟环境（不随镜像分发）
+.venv/
+venv/
+
+# 环境变量文件（含密钥）
+.env
+
+# 版本控制与编辑器
+.git/
+.idea/
+.vscode/
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+
+# 运行时产物
+logs/
+*.log
+
+# 文档截图
+docs/

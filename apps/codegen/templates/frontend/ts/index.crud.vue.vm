@@ -1,0 +1,191 @@
+<template>
+  <CrudPage
+    :search-config="searchConfig"
+    :table-config="tableConfig"
+    :form-config="formConfig"
+    :load-form-data="loadFormData"
+  >
+#foreach($fieldConfig in $fieldConfigs)
+#if($fieldConfig.isShowInQuery == 1 && $fieldConfig.dictType && $fieldConfig.dictType.trim() != "")
+    <template #search-${fieldConfig.fieldName}="{ formData, prop, attrs }">
+      <DictSelect v-model="formData[prop]" code="$fieldConfig.dictType" v-bind="attrs" />
+    </template>
+#end
+#end
+#foreach($fieldConfig in $fieldConfigs)
+#if($fieldConfig.isShowInList == 1 && $fieldConfig.dictType && $fieldConfig.dictType.trim() != "")
+    <template #table-cell-${fieldConfig.fieldName}="{ row }">
+      <DictTag :model-value="row.${fieldConfig.fieldName}" code="$fieldConfig.dictType" />
+    </template>
+#end
+#end
+#foreach($fieldConfig in $fieldConfigs)
+#if($fieldConfig.isShowInForm == 1 && $fieldConfig.formType != "HIDDEN" && $fieldConfig.dictType && $fieldConfig.dictType.trim() != "")
+    <template #form-${fieldConfig.fieldName}="{ formData, prop, attrs }">
+      <DictSelect v-model="formData[prop]" code="$fieldConfig.dictType" v-bind="attrs" />
+    </template>
+#end
+#end
+  </CrudPage>
+</template>
+
+<script setup lang="ts">
+import ${entityName}API from "@/api/${moduleName}/${entityKebab}";
+import type {
+  ${entityName}Form,
+  ${entityName}Item,
+  ${entityName}QueryParams,
+} from "@/api/${moduleName}/${entityKebab}";
+import type {
+  CrudRecord,
+  CrudFormConfig,
+  CrudTableConfig,
+  CrudSearchConfig,
+} from "@/components/Crud/types";
+
+defineOptions({ name: "$entityName", inheritAttrs: false });
+
+const searchConfig: CrudSearchConfig = {
+  fields: [
+#foreach($fieldConfig in $fieldConfigs)
+#if($fieldConfig.isShowInQuery == 1)
+    {
+      prop: "$fieldConfig.fieldName",
+      label: "$fieldConfig.fieldComment",
+#if($fieldConfig.dictType && $fieldConfig.dictType.trim() != "")
+      type: "custom",
+      attrs: { clearable: true },
+#elseif($fieldConfig.formType == "DATE" || $fieldConfig.formType == "DATE_TIME")
+      type: "date-picker",
+#if($fieldConfig.queryType == "BETWEEN")
+      initialValue: [],
+      attrs: {
+        type: "daterange",
+        valueFormat: "YYYY-MM-DD",
+        startPlaceholder: "开始日期",
+        endPlaceholder: "结束日期",
+      },
+#else
+      attrs: { type: "date", valueFormat: "YYYY-MM-DD", clearable: true },
+#end
+#elseif($fieldConfig.tsType == "number")
+      type: "input-number",
+      attrs: { clearable: true },
+#else
+      type: "input",
+      attrs: { clearable: true },
+#end
+    },
+#end
+#end
+  ],
+};
+
+const tableConfig: CrudTableConfig<${entityName}Query, ${entityName}Item> = {
+  permissionPrefix: "${permissionPrefix}",
+  table: { border: true },
+  fetchData: ${entityName}API.getPage,
+  deleteByIds: ${entityName}API.deleteByIds,
+  toolbarActions: ["create", "delete"],
+  tableTools: ["refresh", "columns", "search"],
+  columns: [
+    { type: "selection", width: 50 },
+#foreach($fieldConfig in $fieldConfigs)
+#if($fieldConfig.isShowInList == 1)
+    { prop: "$fieldConfig.fieldName", label: "$fieldConfig.fieldComment", minWidth: 120 },
+#end
+#end
+    {
+      prop: "actions",
+      label: "操作",
+      cellType: "actions",
+      actions: ["view", "edit", "delete"],
+      fixed: "right",
+      width: 200,
+    },
+  ],
+};
+
+const formConfig: CrudFormConfig<${entityName}Form> = {
+  title: ({ mode }) => ({
+    create: "新增$!{entityComment}",
+    edit: "编辑$!{entityComment}",
+    view: "查看$!{entityComment}",
+  })[mode],
+  dialog: { width: 560 },
+  /**
+   * 保存记录，更新目标使用打开表单时的主键。
+   */
+  submitForm(data, { mode, id }) {
+    if (mode === "create") return ${entityName}API.create(data);
+    if (id === undefined) throw new Error("缺少记录 ID");
+    return ${entityName}API.update(String(id), data);
+  },
+  fields: [
+#foreach($fieldConfig in $fieldConfigs)
+#if($fieldConfig.isShowInForm == 1 && $fieldConfig.formType != "HIDDEN")
+    {
+      prop: "$fieldConfig.fieldName",
+      label: "$fieldConfig.fieldComment",
+#if($fieldConfig.isRequired == 1)
+      required: true,
+#end
+#if($fieldConfig.dictType && $fieldConfig.dictType.trim() != "")
+      type: "custom",
+#elseif($fieldConfig.formType == "SWITCH")
+      type: "switch",
+#if($fieldConfig.tsType == "boolean")
+      initialValue: true,
+      attrs: { activeValue: true, inactiveValue: false },
+#else
+      initialValue: 1,
+      attrs: { activeValue: 1, inactiveValue: 0 },
+#end
+#elseif($fieldConfig.formType == "DATE" || $fieldConfig.formType == "DATE_TIME")
+      type: "date-picker",
+#if($fieldConfig.formType == "DATE_TIME")
+      attrs: { type: "datetime", valueFormat: "YYYY-MM-DD HH:mm:ss" },
+#else
+      attrs: { type: "date", valueFormat: "YYYY-MM-DD" },
+#end
+#elseif($fieldConfig.formType == "INPUT_NUMBER")
+      type: "input-number",
+#if($fieldConfig.isDecimal == 1)
+      attrs: { precision: 2 },
+#end
+#elseif($fieldConfig.formType == "SELECT")
+      type: "select",
+      options: [],
+#elseif($fieldConfig.formType == "RADIO")
+      type: "radio",
+      options: [],
+#elseif($fieldConfig.formType == "CHECK_BOX")
+      type: "checkbox",
+      initialValue: [],
+      options: [],
+#else
+      type: "input",
+#if($fieldConfig.formType == "TEXT_AREA")
+      attrs: { type: "textarea", rows: 3 },
+#elseif($fieldConfig.isPassword == 1)
+      attrs: { type: "password", showPassword: true },
+#elseif($fieldConfig.isEmail == 1)
+      attrs: { maxlength: 50 },
+#elseif($fieldConfig.isMobile == 1)
+      attrs: { maxlength: 11 },
+#end
+#end
+    },
+#end
+#end
+  ],
+};
+
+/**
+ * 加载编辑和查看所需的详情。
+ */
+function loadFormData(row: CrudRecord): Promise<${entityName}Form> {
+  const rowKey = tableConfig.rowKey ?? "id";
+  return ${entityName}API.getFormData(String(row[rowKey]));
+}
+</script>

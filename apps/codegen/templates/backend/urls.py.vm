@@ -1,0 +1,11 @@
+"""${businessName}路由"""
+
+from core.routers import AppRouter
+
+from .views import ${entityName}ViewSet
+
+
+router = AppRouter(trailing_slash=False)
+router.register(r"", ${entityName}ViewSet, basename="${entityKebabPlural}")
+
+urlpatterns = router.urls
