@@ -1,8 +1,4 @@
-"""schema 模块。
-
-Author: Ray.Hao
-Version: 0.0.1
-"""
+"""drf-spectacular 接口文档配置。"""
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "youlai-django",

@@ -11,7 +11,7 @@ from django.utils import timezone
 from drf_spectacular.utils import OpenApiParameter, extend_schema, inline_serializer
 from rest_framework import serializers
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.system.logs.models import Log
@@ -107,7 +107,7 @@ class LogViewSet(BaseModelViewSet):
             ),
         ),
     )
-    @action(methods=["get"], detail=False, url_path="analytics/trend", permission_classes=[AllowAny])
+    @action(methods=["get"], detail=False, url_path="analytics/trend", permission_classes=[IsAuthenticated])
     def views_trend(self, request, *args, **kwargs):
         start_date_str = request.query_params.get("startDate", "")
         end_date_str = request.query_params.get("endDate", "")
@@ -183,7 +183,7 @@ class LogViewSet(BaseModelViewSet):
             ),
         ),
     )
-    @action(methods=["get"], detail=False, url_path="analytics/overview", permission_classes=[AllowAny])
+    @action(methods=["get"], detail=False, url_path="analytics/overview", permission_classes=[IsAuthenticated])
     def views(self, request, *args, **kwargs):
         now = timezone.now()
         today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)

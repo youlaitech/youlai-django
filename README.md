@@ -27,7 +27,7 @@
 
 ## 项目简介
 
-**youlai-django** 是一套基于 Django.0 / DRF 的企业级权限管理系统后端，配套前端 [vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin) 和移动端 [youlai-app](https://gitee.com/youlaiorg/youlai-app)，并提供 **7 种语言实现**（Java / Node.js / Go / Python / PHP / C# / Rust），共享同一套 API 规范与数据库结构。适用于企业中后台管理系统的学习参考与二次开发。
+**youlai-django** 是一套基于 Django 6.0 / DRF 的企业级权限管理系统后端，配套前端 [vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin) 和移动端 [youlai-app](https://gitee.com/youlaiorg/youlai-app)，并提供 **7 种语言实现**（Java / Node.js / Go / Python / PHP / C# / Rust），共享同一套 API 规范与数据库结构。适用于企业中后台管理系统的学习参考与二次开发。
 
 ## 核心特性
 
@@ -35,7 +35,7 @@
 - 🛡️ **细粒度权限** — RBAC 权限模型，菜单/按钮/接口统一治理
 - ⚡ **代码生成器** — 一键生成前后端 CRUD 代码
 - 📦 **模块齐全** — 用户、角色、菜单、部门、字典、文件、消息中心、操作日志
-- 🔌 **实时通信** — SSE 推送：在线用户数、字典同步、通知广播
+- 🔌 **实时通信** — WebSocket 推送：在线用户数、字典同步、通知广播
 
 ## 系统预览
 

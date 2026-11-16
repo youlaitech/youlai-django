@@ -366,5 +366,4 @@ def generate_captcha():
     return {
         "captchaId": captcha_id,
         "captchaBase64": captcha_base64,
-        "captchaCode": answer,
     }

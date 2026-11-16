@@ -1,8 +1,4 @@
-"""
-通用配置
-
-此文件仅包含所有环境共享的配置定义。
-"""
+"""所有环境共享的配置。"""
 
 from datetime import timedelta
 from pathlib import Path
@@ -121,6 +117,7 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'EXCEPTION_HANDLER': 'core.exceptions.handler.global_exception_handler',
     'DEFAULT_PAGINATION_CLASS': 'core.pagination.StandardResultsPagination',
+    'PAGE_SIZE': 10,
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
@@ -136,12 +133,10 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(seconds=env_int('JWT_ACCESS_TOKEN_LIFETIME', 7200)),
     'REFRESH_TOKEN_LIFETIME': timedelta(seconds=env_int('JWT_REFRESH_TOKEN_LIFETIME', 604800)),
+    'SIGNING_KEY': env_str('JWT_SECRET_KEY', SECRET_KEY),
 }
 
 JWT_SECRET_KEY = env_str('JWT_SECRET_KEY', '')
-
-# Redis Token 配置
-REDIS_TOKEN_ALLOW_MULTI_LOGIN = env_bool('REDIS_TOKEN_ALLOW_MULTI_LOGIN', True)
 
 # Redis 连接信息（Channel layer 与实时票据共用）
 REDIS_HOST = env_str('REDIS_HOST', '127.0.0.1')
@@ -197,16 +192,7 @@ SPECTACULAR_SETTINGS = _SPECTACULAR_SETTINGS
 APPEND_SLASH = False
 
 # ================================
-# 缓存配置
-# ================================
-
-CACHE_ENABLED = env_bool('CACHE_ENABLED', False)
-CACHE_TYPE = env_str('CACHE_TYPE', 'redis')
-CACHE_TTL_MS = env_int('CACHE_TTL_MS', 3600000)
-CACHE_NULL_VALUES = env_bool('CACHE_NULL_VALUES', True)
-
-# ================================
-# 文件存储配置 (OSS)
+# 文件存储配置
 # ================================
 
 OSS_TYPE = env_str('OSS_TYPE', 's3')
@@ -216,19 +202,10 @@ S3_ACCESS_KEY = env_str('S3_ACCESS_KEY', 'rustfs-admin')
 S3_SECRET_KEY = env_str('S3_SECRET_KEY', 'rustfs-admin')
 S3_BUCKET_NAME = env_str('S3_BUCKET_NAME', 'public')
 S3_SSL = env_bool('S3_SSL', False)
-S3_SAVE_FILE_PREFIX_DOMAIN = env_bool('S3_SAVE_FILE_PREFIX_DOMAIN', True)
-S3_CUSTOM_DOMAIN = env_str('S3_CUSTOM_DOMAIN', 'https://www.youlai.tech/storage')
 
-# ── 文件上传限制 ──
+# 文件上传限制
 FILE_MAX_SIZE_MB = 50
 FILE_ALLOWED_EXTENSIONS = "jpg,jpeg,png,gif"
-
-ALIYUN_OSS_ENDPOINT = env_str('ALIYUN_OSS_ENDPOINT', 'oss-cn-hangzhou.aliyuncs.com')
-ALIYUN_OSS_ACCESS_KEY_ID = env_str('ALIYUN_OSS_ACCESS_KEY_ID', '')
-ALIYUN_OSS_ACCESS_KEY_SECRET = env_str('ALIYUN_OSS_ACCESS_KEY_SECRET', '')
-ALIYUN_OSS_BUCKET_NAME = env_str('ALIYUN_OSS_BUCKET_NAME', 'default')
-
-LOCAL_STORAGE_PATH = env_str('LOCAL_STORAGE_PATH', str(BASE_DIR / 'storage'))
 
 # ================================
 # 短信配置
@@ -274,25 +251,6 @@ CAPTCHA_EXPIRE_SECONDS = env_int('CAPTCHA_EXPIRE_SECONDS', 120)
 
 WX_MINIAPP_APP_ID = env_str('WX_MINIAPP_APP_ID', '')
 WX_MINIAPP_APP_SECRET = env_str('WX_MINIAPP_APP_SECRET', '')
-
-# ================================
-# XXL-Job 定时任务配置
-# ================================
-
-# 定时任务开关
-XXL_JOB_ENABLED = env_bool('XXL_JOB_ENABLED', False)
-# XXL-Job 管理后台地址
-XXL_JOB_ADMIN_ADDRESSES = env_str('XXL_JOB_ADMIN_ADDRESSES', 'http://127.0.0.1:8080')
-# XXL-Job 访问令牌
-XXL_JOB_ACCESS_TOKEN = env_str('XXL_JOB_ACCESS_TOKEN', 'default_token')
-# 执行器应用名称
-XXL_JOB_EXECUTOR_APP_NAME = env_str('XXL_JOB_EXECUTOR_APP_NAME', 'xxl-job-executor-youlai-django')
-# 执行器端口
-XXL_JOB_EXECUTOR_PORT = env_int('XXL_JOB_EXECUTOR_PORT', 9999)
-# 日志路径
-XXL_JOB_LOG_PATH = env_str('XXL_JOB_LOG_PATH', '/data/applogs/xxl-job/jobhandler')
-# 日志保留天数
-XXL_JOB_LOG_RETENTION_DAYS = env_int('XXL_JOB_LOG_RETENTION_DAYS', 30)
 
 # 必填配置校验（启动即失败）
 require_env('DB_HOST')

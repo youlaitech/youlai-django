@@ -40,14 +40,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
  
             redis_conn = get_redis_connection("default")
             redis_key = f"captcha:image:{captcha_key}"
-            stored_value = redis_conn.get(redis_key)
+            # 原子取删：无论校验成败验证码都作废，且并发请求只有一个能取到值
+            stored_value = redis_conn.getdel(redis_key)
             if not stored_value:
                 raise ValidationError({"code": "A0242", "msg": "用户验证码过期"})
 
             if captcha_code.lower() != stored_value.decode("utf-8").lower():
                 raise ValidationError({"code": "A0240", "msg": "验证码错误"})
-
-            redis_conn.delete(redis_key)
  
         # 检查用户状态
         username = attrs.get('username')

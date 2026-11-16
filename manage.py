@@ -11,9 +11,9 @@ from dotenv import load_dotenv
 
 def _assert_supported_python():
     version = sys.version_info[:2]
-    if version < (3, 10) or version >= (3, 15):
+    if version < (3, 12) or version >= (3, 15):
         raise RuntimeError(
-            f"当前 Python 版本为 {sys.version.split()[0]}，本项目仅支持 Python 3.10-3.14。\n"
+            f"当前 Python 版本为 {sys.version.split()[0]}，本项目仅支持 Python 3.12-3.14。\n"
             "原因：Python 3.15 及以上在 Windows 上部分依赖可能缺少预编译 wheel，"
             "安装时会提示不支持或要求从源码编译。"
         )

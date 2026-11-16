@@ -45,7 +45,7 @@
 
 - 📦 **Complete modules** — users, roles, menus, departments, dictionaries, files, message center, operation logs
 
-- 🔌 **Real-time communication** — SSE push: online user count, dictionary sync, notification broadcast
+- 🔌 **Real-time communication** — WebSocket push: online user count, dictionary sync, notification broadcast
 
 
 
@@ -257,7 +257,7 @@ youlai-django/
 
 │   ├── codegen/                    # Code generation
 
-│   └── message/                    # SSE push
+│   └── message/                    # Realtime push
 
 ├── config/                         # Project config
 
